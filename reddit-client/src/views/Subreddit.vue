@@ -13,7 +13,7 @@
       </b-field>
       <button class="button is-success">Add Post</button>
     </form>
-    <div class="posts columns is-multiline">
+    <div class="posts columns is-multiline is-4">
       <div class="card column is-4" v-for="(post, index) in posts" :key="post.id">
         <div class="card-image" v-if="isImage(post.URL)">
           <figure class="image">
@@ -129,5 +129,14 @@ export default {
 <style>
 .posts {
   margin-top: 2em;
+}
+
+.card {
+  margin: 1%;
+  border-radius: 5px;
+}
+
+.card img {
+  border-radius: 5px;
 }
 </style>
