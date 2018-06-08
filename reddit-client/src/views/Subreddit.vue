@@ -24,7 +24,7 @@
           <div class="media">
             <div class="media-left">
               <figure class="image is-48x48">
-                <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                <img :src="post.image" alt="Placeholder image">
               </figure>
             </div>
             <div class="media-content">
@@ -55,13 +55,13 @@ export default {
       title: '',
       description: '',
       URL: '',
-    }
+    },
   }),
   mounted() {
     this.initSubreddit(this.$route.params.name);
   },
   watch: {
-    '$route.params.name'() {
+    '$route.params.name': function () {
       this.initSubreddit(this.$route.params.name);
     },
     subreddit() {
@@ -71,12 +71,16 @@ export default {
     },
   },
   computed: {
-    ...mapState('subreddit', ['posts']),
-    ...mapGetters('subreddit', ['subreddit'])
+    // ...mapState('subreddit', ['posts']),
+    ...mapGetters({
+      subreddit: 'subreddit/subreddit',
+      user: 'auth/user',
+      posts: 'subreddit/posts'
+  }),
   },
   methods: {
     isImage(url) {
-      return url.match(/(png|jpg|jpeg|gif)$/)
+      return url.match(/(png|jpg|jpeg|gif)$/);
     },
     ...mapActions('subreddit', ['createPost', 'initSubreddit', 'initPosts']),
     async onCreatePost() {
@@ -89,7 +93,7 @@ export default {
         };
         this.showForm = false;
       }
-    }
+    },
   },
 };
 </script>

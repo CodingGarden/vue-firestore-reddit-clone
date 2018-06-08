@@ -5,6 +5,12 @@ const state = {
   isLoggedIn: false,
 };
 
+const getters ={
+  user: state => {
+    return state.user
+  }
+}
+
 const mutations = {
   setUser(state, user) {
     if (user) {
@@ -30,6 +36,7 @@ const actions = {
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions,
 };
