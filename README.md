@@ -25,10 +25,10 @@
 
 
 ## Extra
-* [ ] Hide submit form if not logged in
-* [ ] Show Usernames
-* [ ] Show User Images
-* [ ] Format Dates
+* [x] Hide submit form if not logged in
+* [x] Show Usernames
+* [x] Show User Images
+* [x] Format Dates
 * [ ] UpVote/DownVote Posts
   * Update Rules
   * [ ] Order by total score
