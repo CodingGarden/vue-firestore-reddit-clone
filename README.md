@@ -46,3 +46,5 @@
 ## Resources
 
 * https://angularfirebase.com/tag/firestore/
+
+![](./ERD.png)
