@@ -30,7 +30,7 @@
             <div class="media-content">
               <p class="title is-4" v-if="!post.URL">{{post.title}}</p>
               <p class="title is-4" v-if="post.URL"><a :href="post.URL" target="_blank">{{post.title}}</a></p>
-              <p class="subtitle is-6">@johnsmith</p>
+              <p class="subtitle is-6">@{{post.username}}</p>
             </div>
           </div>
 

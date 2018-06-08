@@ -18,6 +18,7 @@ const actions = {
   async createPost({ getters }, post) {
     const result = posts.doc();
     post.id = result.id;
+    post.username = this.getters['auth/user'].name
     post.image = this.getters['auth/user'].image;
     post.subreddit_id = getters.subreddit.id;
     post.user_id = firebase.auth().currentUser.uid;
