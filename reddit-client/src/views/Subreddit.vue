@@ -13,7 +13,7 @@
       </b-field>
       <button class="button is-success">Add Post</button>
     </form>
-    <div class="posts columns">
+    <div class="posts columns is-multiline">
       <div class="card column is-4" v-for="post in posts" :key="post.id">
         <div class="card-image" v-if="isImage(post.URL)">
           <figure class="image">
@@ -81,7 +81,13 @@ export default {
     ...mapActions('subreddit', ['createPost', 'initSubreddit', 'initPosts']),
     async onCreatePost() {
       if (this.post.title && (this.post.description || this.post.URL)) {
-        await this.createPost(this.post);
+        this.createPost(this.post);
+        this.post = {
+          title: '',
+          description: '',
+          URL: '',
+        };
+        this.showForm = false;
       }
     }
   },

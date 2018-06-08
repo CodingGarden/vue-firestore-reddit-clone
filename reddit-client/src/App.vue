@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navbar is-black" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="/#/">
+        <a class="navbar-item" href="/#/subreddits">
           Coding Garden Link Share
         </a>
 

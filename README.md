@@ -22,17 +22,23 @@
   * Update Rules
 * [x] Display Posts on Subreddit Page
   * Types: Image/Text/Url
+
+
+## Extra
+* [ ] Hide submit form if not logged in
+* [ ] Show Usernames
+* [ ] Show User Images
+* [ ] Format Dates
 * [ ] UpVote/DownVote Posts
   * Update Rules
   * [ ] Order by total score
+  * [ ] Order by created
 * [ ] Add comment to Post
   * Update Rules
 * [ ] User Profile
   * [ ] Show Submitted Posts
   * [ ] Show UpVoted Posts
   * [ ] Show Comments
-
-## Extra
 * [ ] Edit Post
 * [ ] Edit Comment
 * [ ] Search/Filter Posts
