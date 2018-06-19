@@ -30,7 +30,7 @@
 * [x] Show User Images
 * [x] Format Dates
 * [x] Fix card formatting
-* [ ] Search/Filter Posts
+* [x] Search/Filter Posts
 * [ ] UpVote/DownVote Posts
   * Update Rules
   * [ ] Order by total score
@@ -48,7 +48,7 @@
 * [ ] Display Error Image if bad link/error
 * [ ] Cloud Function Score Aggregator
   * https://firebase.google.com/docs/firestore/solutions/aggregation#solution_cloud_functions
-* [ ] Delete Post
+* [x] Delete Post
   * [ ] Cloud Function "Cascade Delete" comments
 * [ ] Upload Images to Firebase storage
 
