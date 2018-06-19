@@ -39,7 +39,7 @@ import { mapActions, mapState } from 'vuex';
 
 export default {
   computed: mapState('auth', ['user', 'isLoggedIn']),
-  methods: mapActions('auth', ['login', 'logout'])
+  methods: mapActions('auth', ['login', 'logout']),
 };
 </script>
 
@@ -54,7 +54,7 @@ export default {
   flex-direction: row;
 }
 
-.avatar { 
+.avatar {
   display: flex;
   flex-direction: column;
   align-items: center;

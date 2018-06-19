@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {
-  firebaseMutations
-} from 'vuexfire';
+import { firebaseMutations } from 'vuexfire';
 
 import auth from './auth';
 import subreddits from './subreddits';

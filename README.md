@@ -30,6 +30,7 @@
 * [x] Show User Images
 * [x] Format Dates
 * [x] Fix card formatting
+* [ ] Search/Filter Posts
 * [ ] UpVote/DownVote Posts
   * Update Rules
   * [ ] Order by total score
@@ -42,7 +43,6 @@
   * [ ] Show Comments
 * [ ] Edit Post
 * [ ] Edit Comment
-* [ ] Search/Filter Posts
 * [ ] UpVote/DownVote Comment
 * [ ] Reply to Comment
 * [ ] Display Error Image if bad link/error
