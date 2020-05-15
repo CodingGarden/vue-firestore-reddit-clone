@@ -30,76 +30,105 @@
               <b-input v-model="searchTerm"></b-input>
           </b-field>
       </form>
+    <br>
       <div class="posts columns is-multiline is-4">
+        <p class="is-size-1 is-center" v-if="filteredPosts.length == 0">There are no Posts</p>
           <div class="column is-4"
-              v-for="(post, index) in filteredPosts"
+              v-for="post in filteredPosts"
               :key="post.id">
               <div class="card">
-                  <div class="card-image"
-                      v-if="isImage(post.URL)">
-                      <figure class="image">
-                          <img :src="post.URL"
-                              alt="Placeholder image">
-                      </figure>
-                  </div>
-                  <div class="card-content">
-                      <div class="media">
+                     <div class="media">
                           <div class="media-left">
-                              <figure class="image is-48x48">
-                                  <img :src="loadedUsersById[post.user_id].image"
-                                      alt="Placeholder image">
+                            <figure class="image is-48x48">
+                                  <img :src="post.author[0].photoURL"> 
                               </figure>
+                               Posted by <strong class="is-size-5">{{post.author[0].displayName}}</strong>  
+                        <time class="is-size-6"> {{ post.created_at.seconds |  moment("from", "now", true) }} ago <b-icon
+                pack="fas"
+                icon="clock"
+                size="is-small">
+            </b-icon></time>
                           </div>
-                          <div class="media-content">
-                              <p class="title is-4"
+                      </div>
+                    <div class="media-content">
+                              <p class="title is-3"
                                   v-if="!post.URL">{{post.title}}</p>
                               <p class="title is-4"
                                   v-if="post.URL">
                                   <a :href="post.URL"
                                       target="_blank">{{post.title}}</a>
                               </p>
-                              <p class="subtitle is-6">{{loadedUsersById[post.user_id].name}}</p>
                           </div>
-                      </div>
-                      <div class="content">
-                          {{post.description}}
                           <br>
-                          <time>{{getCreated(index)}}</time>
+                  <div class="card-image" v-if="post.URL && isImage(post.URL)">
+                      <figure class="image is-2by1">
+                          <img :src="post.URL"
+                              alt="Placeholder image">
+                      </figure>
+               
+                  </div>
+                  <div class="card-content">
+                      <div class="content is-size-3" v-if="post.description">
+                          {{post.description.substring(0,50)+".."}}
                           <br>
-                          <button
-                            @click="deletePost(post.id)"
-                            v-if="user && user.id == post.user_id"
-                            class="button is-danger">
-                            Delete Post
+                           </div>
+                          <br>
+                          <span class="tag is-dark is-medium">
+                      <h5 class="is-size-5" v-if="post.likes == 1">{{post.likes}} like</h5>
+                             <h5 class="is-size-5" v-else>{{post.likes}} likes</h5>
+                 </span>
+                          <hr>
+                          &nbsp;&nbsp;
+                           <button v-if="isLoggedIn && !alreadyLiked(post.liked_by,user.id)"
+                            @click="likePost(post.id)"
+                            class="button is-primary">
+                            Like 👍
                           </button>
-                          <!-- <router-link
+                           <button v-if="isLoggedIn && alreadyLiked(post.liked_by,user.id)"
+                            @click="unlikePost(post.id)"
+                            class="button is-primary ">
+                            Unlike 👎
+                          </button>
+                          <br>
+                          <br>
+                          <router-link
                             :to="{
                               name: 'post',
                               params: {
+                          
                                 name: $route.params.name,
                                 post_id: post.id
                               }
                             }"
-                            class="button is-primary">View Post</router-link> -->
-                      </div>
+                            class="button is-primary">View Post</router-link> 
+                            &nbsp;&nbsp;
+                            <button @click="deletePost(post.id)" class="button is-danger"
+                            v-if="user && user.id == post.user_id">Delete Post
+                            </button>
                   </div>
               </div>
           </div>
       </div>
   </section>
 </template>
-
 <script>
+import TimeAgo from 'vue2-timeago'
+
 import {
   mapState,
   mapGetters,
   mapActions,
 } from 'vuex';
 
+
 export default {
+    components: {
+    TimeAgo,
+  },
   data: () => ({
     showForm: false,
     searchTerm: '',
+    sortRule: '',
     post: {
       title: '',
       description: '',
@@ -109,6 +138,7 @@ export default {
   mounted() {
     this.initUsers();
     this.initSubreddit(this.$route.params.name);
+    
   },
   watch: {
     '$route.params.name': function () {
@@ -125,7 +155,6 @@ export default {
     ...mapState('auth', ['isLoggedIn', 'user']),
     ...mapGetters({
       subreddit: 'subreddit/subreddit',
-      usersById: 'users/usersById',
     }),
     loadedUsersById() {
       return this.posts.reduce((byId, post) => {
@@ -144,12 +173,23 @@ export default {
       }
       return this.posts;
     },
+
   },
   methods: {
     isImage(url) {
       return url.match(/(png|jpg|jpeg|gif)$/);
     },
-    ...mapActions('subreddit', ['createPost', 'initSubreddit', 'initPosts', 'deletePost']),
+      alreadyLiked(arr, id){
+      const found = arr.find(element => element == id)
+      
+      if(found){
+      
+        return true;
+        } 
+      else return false;
+    },
+    ...mapActions('subreddit', ['createPost', 'initSubreddit', 'initPosts','deletePost']),
+    ...mapActions('post',['likePost','unlikePost']),
     ...mapActions('users', {
       initUsers: 'init',
     }),
@@ -164,37 +204,6 @@ export default {
         this.showForm = false;
       }
     },
-    getCreated(index) {
-      function timeSince(date) {
-        const seconds = Math.floor((new Date() - date) / 1000);
-
-        let interval = Math.floor(seconds / 31536000);
-
-        if (interval > 1) {
-          return `${interval} years`;
-        }
-        interval = Math.floor(seconds / 2592000);
-        if (interval > 1) {
-          return `${interval} months`;
-        }
-        interval = Math.floor(seconds / 86400);
-        if (interval > 1) {
-          return `${interval} days`;
-        }
-        interval = Math.floor(seconds / 3600);
-        if (interval > 1) {
-          return `${interval} hours`;
-        }
-        interval = Math.floor(seconds / 60);
-        if (interval > 1) {
-          return `${interval} minutes`;
-        }
-        return `${Math.floor(seconds)} seconds`;
-      }
-      return timeSince(this.posts[index].created_at.seconds * 1000) < 0 ?
-        '0 seconds ago' :
-        `${timeSince(this.posts[index].created_at.seconds * 1000)} ago`;
-    },
   },
 };
 </script>
@@ -203,18 +212,14 @@ export default {
     .search-form {
         margin-top: 2em;
     }
-
     .posts {
         margin-top: 2em;
     }
-
     .card {
         height: 100%;
         margin: 1%;
         border-radius: 5px;
     }
-
-    .card img {
-        border-radius: 5px;
-    }
+     
 </style>
+

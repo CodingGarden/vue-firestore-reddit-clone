@@ -3,10 +3,9 @@
     <nav class="navbar is-black" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/#/subreddits">
-          Seedling 🌱
+          Reddit Clone 🌱
         </a>
-
-      </div>
+        </div>
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="field is-grouped">
@@ -22,6 +21,15 @@
                 </figure>
                 <figcaption>{{user.name}}</figcaption>
               </span>
+                <p class="control" v-if="isLoggedIn">
+              <router-link   :to="{
+                              name: 'profile'
+                              }">
+                <button class="button is-info">Profile 👤</button>
+              </router-link>
+
+            </p>
+             <p class="control logged-in" v-if="isLoggedIn">
               <a class="button is-primary" @click="logout()">
                 LogOut
               </a>
@@ -48,12 +56,10 @@ export default {
 .main {
   margin-top: 2em;
 }
-
 .logged-in {
   display: flex;
   flex-direction: row;
 }
-
 .avatar {
   display: flex;
   flex-direction: column;

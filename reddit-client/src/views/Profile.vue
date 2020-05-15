@@ -1,85 +1,92 @@
 <template>
 <section>
   <div class="container">
-    <button
-        v-if="isLoggedIn"
-        @click="showCommentForm = !showCommentForm"
-        class="button is-success">
-        Toggle Comment Form
-      </button>
-      
-      <form 
-        v-if="showCommentForm && isLoggedIn"
-        @submit.prevent="onCreateComment()">
-          <b-field label="Comment">
-              <b-input
-                v-model="comment.content">
-              </b-input>
+       <span class="avatar">
+                <figure class="image is-48x48">
+                  <img :src="user.image">
+                </figure>
+                <strong>{{user.name}}</strong>
+              </span>
+    <form class="search-form">
+          <b-field label="Search">
+              <b-input v-model="searchTerm"></b-input>
           </b-field>
-          <b-field label="URL">
-              <b-input v-model="comment.URL"
-                  type="url"></b-input>
-          </b-field>
-          <button class="button is-info">Post Comment</button>
       </form>
-          <div class="card">
+      <hr>
+    <h1 class="title">
+      <b class="is-size-2">Your Posts ({{filteredPosts.length}})</b>
+      </h1>
+          <div class="card" v-for="p in filteredPosts" v-bind:key="p.id">
                   <div class="card-content">
                       <div class="media">
                           <div class="media-content">
-                            <figure class="image is-48x48">
-                                  <img :src="post[0].author[0].photoURL"> 
-                              </figure>
-                               Posted by <strong class="is-size-5">{{post[0].author[0].displayName}}</strong>  
-                        <time class="is-size-6"> {{ post[0].created_at.seconds |  moment("from", "now", true) }} ago </time>
+
+                         
+                        <time class="is-size-6"> {{p.created_at.seconds |  moment("from", "now", true) }} ago  <b-icon
+                pack="fas"
+                icon="clock"
+                size="is-small">
+            </b-icon></time>
                             <hr>
                               <p class="title is-size-2"
-                                  v-if="!post[0].URL">{{post[0].title}}</p>
+                                  v-if="!p.URL">{{p.title}}</p>
                               <p class="title is-size-2"
-                                  v-if="post[0].URL">
-                                  <a :href="post[0].URL"
-                                      target="_blank">{{post[0].title}} </a>
+                                  v-if="p.URL">
+                                  <a :href="p.URL"
+                                      target="_blank">{{p.title}} </a>
                               </p>
                           </div>
                       </div>
-                               <div class="content is-size-3" v-if="post[0].description">
-                          {{post[0].description}}
+                               <div class="content is-size-3" v-if="p.description">
+                          {{p.description}}
                              </div>
                       <div class="card-image">
                       <figure>
-                          <img :src="post[0].URL"
-                              v-if="post[0].URL && isImage(post[0].URL)">
+                          <img :src="p.URL"
+                              v-if="p.URL && isImage(p.URL)">
                       </figure>
                   </div>
                     <span class="tag is-dark is-medium">
-                      <h5 class="is-size-5" v-if="post[0].likes == 1">{{post[0].likes}} like</h5>
-                             <h5 class="is-size-5" v-else>{{post[0].likes}} likes</h5>
+                      <h5 class="is-size-5" v-if="p.likes == 1">{{p.likes}} like</h5>
+                             <h5 class="is-size-5" v-else>{{p.likes}} likes</h5>
                  </span>
                           <br>
                           <hr>
-                           <button v-if="isLoggedIn && !alreadyLiked(post[0].liked_by,user.id)"
-                            @click="likePost(post[0].id)"
+                           <button v-if="isLoggedIn && !alreadyLiked(p.liked_by,user.id)"
+                            @click="likePost(p.id)"
                             class="button is-primary">
                             Like 👍
                           </button>
-                           <button v-if="isLoggedIn && alreadyLiked(post[0].liked_by,user.id)"
-                            @click="unlikePost(post[0].id)"
+                           <button v-if="isLoggedIn && alreadyLiked(p.liked_by,user.id)"
+                            @click="unlikePost(p.id)"
                             class="button is-primary">
                             Unlike 👎
                           </button>
                           <br>
                           <br>
-                           <button @click="deletePost(post[0].id)" class="button is-danger"
-                            v-if="user && user.id == post[0].user_id">Delete Post
+                           <button @click="deletePost(p.id)" class="button is-danger"
+                          >Delete Post
                             </button>
+                             <router-link
+                            :to="{
+                              name: 'post',
+                              params: {
+                          
+                                post_id: p.id
+                              }
+                            }"
+                            class="button is-primary">Go to post</router-link> 
                   </div>
               </div>
           </div>
           <hr>
-      <b class="is-size-2" v-if="comments > 0">Comments ({{comments.length}})</b>
+
+      <hr>
+      <b class="is-size-2">Your Comments ({{filteredComments.length}})</b>
     <br>
     
     <br>
-          <article class="card" v-for="comment in comments" :key="comment.id">
+          <article class="card" v-for="comment in filteredComments" :key="comment.id">
   <figure class="media-left">
     <p class="image is-64x64">
           <img :src="comment.author[0].photoURL"
@@ -91,7 +98,7 @@
       <p>
         <strong class="is-size-5">{{comment.author[0].displayName}}</strong><small class="is-size-5"> {{comment.created_at.seconds |  moment("from", "now", true) }} ago</small>
         <br>
-        <h5 class="is-size-5">{{comment.content}}</h5>
+          <h5 class="is-size-5">{{comment.content}}</h5>
         <br>
         <p class="title is-4"
                                   v-if="comment.URL && !isImage(comment.URL)">
@@ -121,10 +128,20 @@
                           -->
                            <button
                             @click="deleteComment(comment.id)"
-                            v-if="user && user.id == comment.user_id"
+                          
                             class="button is-danger">
                             Delete Comment
                           </button>     
+                           <router-link
+                            :to="{
+                              name: 'post',
+                              params: {
+                          
+                                post_id: comment.post_id
+                              }
+                            }"
+                            class="button is-primary">Go to post</router-link> 
+                            &nbsp;&nbsp;
       </div>
     </article>
     </section>
@@ -148,25 +165,39 @@ export default {
     showCommentForm: false,
  
     searchTerm: '',
-    comment: {
-      content: '',
-      URL: '',
-    },
+ 
   }),
   mounted() {
     this.initUsers();
-    this.initPost(this.$route.params.post_id);
-    this.initComments(this.$route.params.post_id);
+    this.initPosts(this.user.id);
+    this.initComments(this.user.id);
+    console.log(this.user.id);
   },
-  watch: {
-    '$route.params.post_id': function () {
-      this.initPost(this.$route.params.post_id);
-    },
 
-  },
   computed: {
-    ...mapState('post', ['post','comments']),
+    ...mapState('profile', ['posts','comments']),
     ...mapState('auth', ['isLoggedIn', 'user']),
+
+       filteredPosts() {
+      if (this.searchTerm) {
+        const regexp = new RegExp(this.searchTerm, 'gi');
+        return this.posts.filter(post =>
+          (post.title + post.description).match(regexp));
+      }
+
+      return this.posts;
+
+    },
+     filteredComments() {
+      if (this.searchTerm) {
+        const regexp = new RegExp(this.searchTerm, 'gi');
+        return this.comments.filter(comment =>
+          (comment.content).match(regexp));
+      }
+
+      return this.comments;
+
+    },
   },
   methods: {
     isImage(url) {
@@ -178,23 +209,13 @@ export default {
       if(found) return true;
       else return false;
     },
-    ...mapActions('post', ['createComment', 'initPost','initComments', 'deletePost',
+    ...mapActions('profile', ['initPosts','initComments', 'deletePost',
     'deleteComment','likePost','unlikePost',
     'likeComment','unlikeComment']),
     ...mapActions('users', {
       initUsers: 'init',
     }),
-    async onCreateComment() {
-      if (this.comment.content  || this.comment.URL) {
-        this.createComment(this.comment);
-        
-        this.comment = {
-          content: '',
-          URL: '',
-        };
-        this.showForm = false;
-      }
-    },
+
   },
 };
 </script>
