@@ -1,19 +1,20 @@
-import { firebaseAction } from 'vuexfire';
-import db from '@/db';
+import { firestoreAction } from 'vuexfire';
+import firebase from '@/firebase';
+import db from '@/db'
+
 
 const state = {
-  subreddits: [],
+    subreddits: [],
 };
 
 const actions = {
-  init: firebaseAction(({ bindFirebaseRef }) => {
-    bindFirebaseRef('subreddits', db.collection('subreddits'));
-  }),
+    init: firestoreAction(({ bindFirestoreRef }) => {
+        bindFirestoreRef('subreddits', db.collection("subreddits"))
+    }),
 };
 
 export default {
-  namespaced: true,
-  state,
-  actions,
+    namespaced: true,
+    state,
+    actions,
 };
-

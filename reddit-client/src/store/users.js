@@ -1,29 +1,30 @@
-import { firebaseAction } from 'vuexfire';
+import { firestoreAction } from 'vuexfire';
 import db from '@/db';
 
 const state = {
-  users: [],
-};
+    users: [],
+}
 
 const getters = {
-  usersById(state) {
-    return state.users.reduce((byId, user) => {
-      byId[user.id] = user;
-      return byId;
-    }, {});
-  },
+    usersById(state) {
+        return state.users.reduce((byId, user) => {
+            byId[user.id] = user;
+            return byId;
+        }, {});
+    },
 };
 
 const actions = {
-  init: firebaseAction(({ bindFirebaseRef }) => {
-    bindFirebaseRef('users', db.collection('users'));
-  }),
+    init: firestoreAction(({
+        bindFirestoreRef
+    }) => {
+        bindFirestoreRef('users', db.collection('users'));
+    }),
 };
 
 export default {
-  namespaced: true,
-  state,
-  actions,
-  getters,
+    namespaced: true,
+    state,
+    actions,
+    getters,
 };
-
