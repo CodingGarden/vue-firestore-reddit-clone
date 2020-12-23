@@ -11,7 +11,7 @@
         <div class="navbar-item">
           <div class="field is-grouped">
             <p class="control" v-if="!isLoggedIn">
-              <a class="button is Danger" @click="login()">
+              <a class="button is-danger" @click="login()">
                 Login with Google
               </a>
             </p>
